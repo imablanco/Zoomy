@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.ablanco.zoomy.ZoomListener;
 import com.ablanco.zoomy.Zoomy;
 
 import java.util.ArrayList;
@@ -55,8 +57,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ImageViewHolder holder, int position) {
             ((ImageView) holder.itemView).setImageResource(images.get(position));
+            holder.itemView.setTag(holder.getAdapterPosition());
             Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this)
-                    .target(holder.itemView);
+                    .target(holder.itemView)
+                    .listener(new ZoomListener() {
+                        @Override
+                        public void onViewStartedZooming(View view) {
+                            Toast.makeText(MainActivity.this, "START ZOOM! "
+                                    + view.getTag(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onViewEndedZooming(View view) {
+                            Toast.makeText(MainActivity.this, "END ZOOM! "
+                                    + view.getTag(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
             builder.register();
         }
 

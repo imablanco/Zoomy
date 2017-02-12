@@ -49,6 +49,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private int mSystemBarsHeight;
 
     private ZoomyConfig mConfig;
+    private ZoomListener mZoomListener;
+
 
     private Runnable mEndingZoomAction = new Runnable() {
         @Override
@@ -63,15 +65,22 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
             mSystemBarsHeight = 0;
             mState = STATE_IDLE;
 
+            if (mZoomListener != null) mZoomListener.onViewEndedZooming(mTarget);
+
             if (mConfig.isImmersiveModeEnabled()) showSystemUI();
         }
     };
 
     ZoomableTouchListener(Activity activity, View view, ZoomyConfig config) {
+        this(activity, view, config, null);
+    }
+
+    ZoomableTouchListener(Activity activity, View view, ZoomyConfig config, ZoomListener zoomListener) {
         this.mActivity = activity;
         this.mTarget = view;
         this.mConfig = config;
         this.mScaleGestureDetector = new ScaleGestureDetector(activity, this);
+        this.mZoomListener = zoomListener;
     }
 
     @Override
@@ -178,6 +187,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         mTarget.setVisibility(View.INVISIBLE);
 
         if (mConfig.isImmersiveModeEnabled()) hideSystemUI();
+        if (mZoomListener != null) mZoomListener.onViewStartedZooming(mTarget);
+
 
     }
 
@@ -225,9 +236,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     }
 
     private void hideSystemUI() {
-        mActivity.getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN); // hide status ba;
     }
