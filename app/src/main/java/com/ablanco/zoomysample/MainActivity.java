@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ImageViewHolder holder, int position) {
             ((ImageView) holder.itemView).setImageResource(images.get(position));
-            Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this).target(holder.itemView);
+            Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this)
+                    .target(holder.itemView);
             builder.register();
         }
 
@@ -82,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
             outRect.set(mSpace, mSpace, mSpace, mSpace);
-
-
         }
 
     }

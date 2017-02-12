@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -32,12 +33,18 @@ class ViewUtils {
         return returnedBitmap;
     }
 
-    static Point getViewAbsoluteCords(View v){
+    static Point getViewAbsoluteCords(View v) {
         int[] location = new int[2];
         v.getLocationInWindow(location);
         int x = location[0];
         int y = location[1];
 
         return new Point(x, y);
+    }
+
+    static void viewMidPoint(PointF point, View v) {
+        float x = v.getWidth();
+        float y = v.getHeight();
+        point.set(x / 2, y / 2);
     }
 }

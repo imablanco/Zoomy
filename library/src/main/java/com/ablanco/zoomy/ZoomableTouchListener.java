@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -37,11 +39,14 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private float mScaleFactor = 1f;
 
     private PointF mCurrentMovementMidPoint = new PointF();
+    private PointF mInitialPinchMidPoint = new PointF();
     private Point mTargetViewCords = new Point();
 
     private boolean mAnimatingZoomEnding = false;
 
     private Interpolator mEndZoomingInterpolator = new AccelerateDecelerateInterpolator();
+
+    private int mSystemBarsHeight;
 
     private ZoomyConfig mConfig;
 
@@ -53,7 +58,9 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
             mTarget.setVisibility(View.VISIBLE);
             mZoomableView = null;
             mCurrentMovementMidPoint = new PointF();
+            mInitialPinchMidPoint = new PointF();
             mAnimatingZoomEnding = false;
+            mSystemBarsHeight = 0;
             mState = STATE_IDLE;
 
             if (mConfig.isImmersiveModeEnabled()) showSystemUI();
@@ -85,6 +92,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
                         break;
                     case STATE_POINTER_DOWN:
                         mState = STATE_ZOOMING;
+                        MotionUtils.midPointOfEvent(mInitialPinchMidPoint, ev);
                         startZoomingView(mTarget);
                         break;
                 }
@@ -94,15 +102,19 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
                 if (mState == STATE_ZOOMING) {
                     MotionUtils.midPointOfEvent(mCurrentMovementMidPoint, ev);
+                    //because our initial pinch could be performed in any of the view edges,
+                    //we need to substract this difference and add system bars height
+                    //as an offset to avoid an initial transition jump
+                    mCurrentMovementMidPoint.x -= mInitialPinchMidPoint.x;
+                    mCurrentMovementMidPoint.y -= mInitialPinchMidPoint.y;
                     //because previous function returns the midpoint for relative X,Y coords,
                     //we need to add absolute view coords in order to ensure the correct position
                     mCurrentMovementMidPoint.x += mTarget.getX();
                     mCurrentMovementMidPoint.y += mTarget.getY();
-                    float x = mCurrentMovementMidPoint.x - (mZoomableView.getWidth() / 2);
-                    float y = mCurrentMovementMidPoint.y - (mZoomableView.getHeight() / 2);
+                    float x = mCurrentMovementMidPoint.x;
+                    float y = mCurrentMovementMidPoint.y;
                     mZoomableView.setX(x);
-                    mZoomableView.setY(y);
-
+                    mZoomableView.setY(y + getSystemBarsHeight());
                 }
 
                 break;
@@ -152,7 +164,6 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         //show the view in the same coords
         mTargetViewCords = ViewUtils.getViewAbsoluteCords(view);
 
-        //// TODO: 12/02/2017 adjust view position
         mZoomableView.setX(mTargetViewCords.x);
         mZoomableView.setY(mTargetViewCords.y);
 
@@ -215,7 +226,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private void hideSystemUI() {
         mActivity.getWindow().getDecorView().setSystemUiVisibility(
-                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN); // hide status ba;
@@ -223,5 +234,18 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private void showSystemUI() {
         mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+    }
+
+    private int getSystemBarsHeight() {
+        if (mSystemBarsHeight == 0) {
+            Rect rect = new Rect();
+            mActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            int statusBarHeight = rect.top;
+            int contentViewTop =
+                    mActivity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+            mSystemBarsHeight = contentViewTop + statusBarHeight;
+        }
+
+        return mSystemBarsHeight;
     }
 }
