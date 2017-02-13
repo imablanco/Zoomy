@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             holder.itemView.setTag(holder.getAdapterPosition());
             Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this)
                     .target(holder.itemView)
+                    .interpolator(new OvershootInterpolator())
                     .listener(new ZoomListener() {
                         @Override
                         public void onViewStartedZooming(View view) {

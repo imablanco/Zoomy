@@ -2,6 +2,7 @@ package com.ablanco.zoomy;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.animation.Interpolator;
 
 /**
  * Created by Álvaro Blanco Cabrero on 12/02/2017.
@@ -27,6 +28,7 @@ public class Zoomy {
         private Activity mActivity;
         private View mTargetView;
         private ZoomListener mZoomListener;
+        private Interpolator mZoomInterpolator;
 
         public Builder(Activity activity) {
             this.mActivity = activity;
@@ -51,6 +53,12 @@ public class Zoomy {
             return this;
         }
 
+        public Builder interpolator(Interpolator interpolator){
+            checkNotDisposed();
+            this.mZoomInterpolator = interpolator;
+            return this;
+        }
+
         public Builder listener(ZoomListener listener) {
             checkNotDisposed();
             this.mZoomListener = listener;
@@ -64,7 +72,7 @@ public class Zoomy {
             if (mTargetView == null)
                 throw new IllegalArgumentException("Target view must not be null");
             mTargetView.setOnTouchListener(new ZoomableTouchListener(mActivity, mTargetView,
-                    mConfig, mZoomListener));
+                    mConfig, mZoomInterpolator, mZoomListener));
             mDisposed = true;
         }
 

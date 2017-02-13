@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -44,9 +42,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private boolean mAnimatingZoomEnding = false;
 
-    private Interpolator mEndZoomingInterpolator = new AccelerateDecelerateInterpolator();
-
-    private int mSystemBarsHeight;
+    private Interpolator mEndZoomingInterpolator;
 
     private ZoomyConfig mConfig;
     private ZoomListener mZoomListener;
@@ -62,7 +58,6 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
             mCurrentMovementMidPoint = new PointF();
             mInitialPinchMidPoint = new PointF();
             mAnimatingZoomEnding = false;
-            mSystemBarsHeight = 0;
             mState = STATE_IDLE;
 
             if (mZoomListener != null) mZoomListener.onViewEndedZooming(mTarget);
@@ -71,14 +66,14 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         }
     };
 
-    ZoomableTouchListener(Activity activity, View view, ZoomyConfig config) {
-        this(activity, view, config, null);
-    }
 
-    ZoomableTouchListener(Activity activity, View view, ZoomyConfig config, ZoomListener zoomListener) {
+    ZoomableTouchListener(Activity activity, View view, ZoomyConfig config, Interpolator interpolator,
+                          ZoomListener zoomListener) {
         this.mActivity = activity;
         this.mTarget = view;
         this.mConfig = config;
+        this.mEndZoomingInterpolator = interpolator != null
+                ? interpolator : new AccelerateDecelerateInterpolator();
         this.mScaleGestureDetector = new ScaleGestureDetector(activity, this);
         this.mZoomListener = zoomListener;
     }
@@ -118,12 +113,12 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
                     mCurrentMovementMidPoint.y -= mInitialPinchMidPoint.y;
                     //because previous function returns the midpoint for relative X,Y coords,
                     //we need to add absolute view coords in order to ensure the correct position
-                    mCurrentMovementMidPoint.x += mTarget.getX();
-                    mCurrentMovementMidPoint.y += mTarget.getY();
+                    mCurrentMovementMidPoint.x += mTargetViewCords.x;
+                    mCurrentMovementMidPoint.y += mTargetViewCords.y;
                     float x = mCurrentMovementMidPoint.x;
                     float y = mCurrentMovementMidPoint.y;
                     mZoomableView.setX(x);
-                    mZoomableView.setY(y + getSystemBarsHeight());
+                    mZoomableView.setY(y);
                 }
 
                 break;
@@ -243,18 +238,5 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private void showSystemUI() {
         mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-    }
-
-    private int getSystemBarsHeight() {
-        if (mSystemBarsHeight == 0) {
-            Rect rect = new Rect();
-            mActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
-            int statusBarHeight = rect.top;
-            int contentViewTop =
-                    mActivity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
-            mSystemBarsHeight = contentViewTop + statusBarHeight;
-        }
-
-        return mSystemBarsHeight;
     }
 }
