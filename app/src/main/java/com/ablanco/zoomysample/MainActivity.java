@@ -11,6 +11,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ablanco.zoomy.TapListener;
 import com.ablanco.zoomy.ZoomListener;
 import com.ablanco.zoomy.Zoomy;
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this)
                     .target(holder.itemView)
                     .interpolator(new OvershootInterpolator())
-                    .listener(new ZoomListener() {
+                    .zoomListener(new ZoomListener() {
                         @Override
                         public void onViewStartedZooming(View view) {
                             Toast.makeText(MainActivity.this, "START ZOOM! "
@@ -73,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
                         public void onViewEndedZooming(View view) {
                             Toast.makeText(MainActivity.this, "END ZOOM! "
                                     + view.getTag(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .tapListener(new TapListener() {
+                        @Override
+                        public void onTap(View v) {
+                            Toast.makeText(MainActivity.this, "Tap on "
+                                    + v.getTag(), Toast.LENGTH_SHORT).show();
                         }
                     });
             builder.register();

@@ -29,6 +29,7 @@ public class Zoomy {
         private View mTargetView;
         private ZoomListener mZoomListener;
         private Interpolator mZoomInterpolator;
+        private TapListener mTapListener;
 
         public Builder(Activity activity) {
             this.mActivity = activity;
@@ -59,9 +60,15 @@ public class Zoomy {
             return this;
         }
 
-        public Builder listener(ZoomListener listener) {
+        public Builder zoomListener(ZoomListener listener) {
             checkNotDisposed();
             this.mZoomListener = listener;
+            return this;
+        }
+
+        public Builder tapListener(TapListener listener) {
+            checkNotDisposed();
+            this.mTapListener = listener;
             return this;
         }
 
@@ -72,7 +79,7 @@ public class Zoomy {
             if (mTargetView == null)
                 throw new IllegalArgumentException("Target view must not be null");
             mTargetView.setOnTouchListener(new ZoomableTouchListener(mActivity, mTargetView,
-                    mConfig, mZoomInterpolator, mZoomListener));
+                    mConfig, mZoomInterpolator, mZoomListener, mTapListener));
             mDisposed = true;
         }
 

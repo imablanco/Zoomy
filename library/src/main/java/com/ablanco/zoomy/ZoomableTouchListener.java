@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -34,6 +35,15 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private View mShadow;
 
     private ScaleGestureDetector mScaleGestureDetector;
+    private GestureDetector mGestureDetector;
+    private SimpleGestureListener mGestureListener = new SimpleGestureListener(){
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            if(mTapListener != null) mTapListener.onTap(mTarget);
+            return true;
+        }
+    };
+
     private float mScaleFactor = 1f;
 
     private PointF mCurrentMovementMidPoint = new PointF();
@@ -46,7 +56,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private ZoomyConfig mConfig;
     private ZoomListener mZoomListener;
-
+    private final TapListener mTapListener;
 
     private Runnable mEndingZoomAction = new Runnable() {
         @Override
@@ -68,14 +78,16 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
 
     ZoomableTouchListener(Activity activity, View view, ZoomyConfig config, Interpolator interpolator,
-                          ZoomListener zoomListener) {
+                          ZoomListener zoomListener, TapListener tapListener) {
         this.mActivity = activity;
         this.mTarget = view;
         this.mConfig = config;
         this.mEndZoomingInterpolator = interpolator != null
                 ? interpolator : new AccelerateDecelerateInterpolator();
         this.mScaleGestureDetector = new ScaleGestureDetector(activity, this);
+        this.mGestureDetector = new GestureDetector(activity, mGestureListener);
         this.mZoomListener = zoomListener;
+        this.mTapListener = tapListener;
     }
 
     @Override
@@ -84,6 +96,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         if (mAnimatingZoomEnding || ev.getPointerCount() > 2) return true;
 
         mScaleGestureDetector.onTouchEvent(ev);
+        mGestureDetector.onTouchEvent(ev);
 
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
 
