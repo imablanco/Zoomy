@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ablanco.zoomy.TapListener;
-import com.ablanco.zoomy.ZoomListener;
 import com.ablanco.zoomy.Zoomy;
 
 import java.util.ArrayList;
@@ -63,19 +62,6 @@ public class MainActivity extends AppCompatActivity {
             Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this)
                     .target(holder.itemView)
                     .interpolator(new OvershootInterpolator())
-                    .zoomListener(new ZoomListener() {
-                        @Override
-                        public void onViewStartedZooming(View view) {
-                            Toast.makeText(MainActivity.this, "START ZOOM! "
-                                    + view.getTag(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onViewEndedZooming(View view) {
-                            Toast.makeText(MainActivity.this, "END ZOOM! "
-                                    + view.getTag(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
                     .tapListener(new TapListener() {
                         @Override
                         public void onTap(View v) {
