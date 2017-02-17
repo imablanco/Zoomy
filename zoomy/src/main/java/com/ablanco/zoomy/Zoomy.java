@@ -11,80 +11,80 @@ import android.view.animation.Interpolator;
 
 public class Zoomy {
 
-    private static ZoomyConfig mDefaultConfig = new ZoomyConfig();
+    private static ZoomyConfig defaultConfig = new ZoomyConfig();
 
     private Zoomy() {
     }
 
     public static void setDefaultConfig(ZoomyConfig config) {
-        mDefaultConfig = config;
+        defaultConfig = config;
     }
 
     public static class Builder {
 
-        private boolean mDisposed = false;
+        private boolean disposed = false;
 
-        private ZoomyConfig mConfig;
-        private Activity mActivity;
-        private View mTargetView;
-        private ZoomListener mZoomListener;
-        private Interpolator mZoomInterpolator;
-        private TapListener mTapListener;
+        private ZoomyConfig config;
+        private Activity activity;
+        private View targetView;
+        private ZoomListener zoomListener;
+        private Interpolator zoomInterpolator;
+        private TapListener tapListener;
 
         public Builder(Activity activity) {
-            this.mActivity = activity;
+            this.activity = activity;
         }
 
         public Builder target(View target) {
-            this.mTargetView = target;
+            this.targetView = target;
             return this;
         }
 
         public Builder animateZooming(boolean animate) {
             checkNotDisposed();
-            if (mConfig == null) mConfig = new ZoomyConfig();
-            this.mConfig.setZoomAnimationEnabled(animate);
+            if ( config == null) config = new ZoomyConfig();
+            this.config.setZoomAnimationEnabled(animate);
             return this;
         }
 
         public Builder enableImmersiveMode(boolean enable) {
             checkNotDisposed();
-            if (mConfig == null) mConfig = new ZoomyConfig();
-            this.mConfig.setImmersiveModeEnabled(enable);
+            if ( config == null) config = new ZoomyConfig();
+            this.config.setImmersiveModeEnabled(enable);
             return this;
         }
 
         public Builder interpolator(Interpolator interpolator){
             checkNotDisposed();
-            this.mZoomInterpolator = interpolator;
+            this.zoomInterpolator = interpolator;
             return this;
         }
 
         public Builder zoomListener(ZoomListener listener) {
             checkNotDisposed();
-            this.mZoomListener = listener;
+            this.zoomListener = listener;
             return this;
         }
 
         public Builder tapListener(TapListener listener) {
             checkNotDisposed();
-            this.mTapListener = listener;
+            this.tapListener = listener;
             return this;
         }
 
         public void register() {
             checkNotDisposed();
-            if (mConfig == null) mConfig = mDefaultConfig;
-            if (mActivity == null) throw new IllegalArgumentException("Activity must not be null");
-            if (mTargetView == null)
+            if ( config == null) config = defaultConfig;
+            if ( activity == null) throw new IllegalArgumentException("Activity must not be null");
+            if ( targetView == null)
                 throw new IllegalArgumentException("Target view must not be null");
-            mTargetView.setOnTouchListener(new ZoomableTouchListener(mActivity, mTargetView,
-                    mConfig, mZoomInterpolator, mZoomListener, mTapListener));
-            mDisposed = true;
+            targetView.setOnTouchListener(new ZoomableTouchListener( activity, targetView,
+                    config, zoomInterpolator, zoomListener, tapListener ));
+            disposed = true;
         }
 
         private void checkNotDisposed() {
-            if (mDisposed) throw new IllegalStateException("Builder already disposed");
+            if ( disposed ) throw new IllegalStateException("Builder already disposed");
         }
 
     }
