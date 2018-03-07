@@ -10,7 +10,7 @@ compile 'com.ablanco.zoomy:zoomy:{latest version}'
 ```
 where `{latest version}` corresponds to published version in JCenter [ ![Download](https://api.bintray.com/packages/ablanco/maven/zoomy/images/download.svg) ](https://bintray.com/ablanco/maven/zoomy/_latestVersion)
 
-##Usage 
+## Usage
 
 To start using Zoomy, just register the View you want to be zoomable
 
@@ -28,10 +28,10 @@ Views can be unregistered for Zoomy too
 ```java
 
 Zoomy.unregister(mZoomableView');
-            
+
 ```
 
-##Customization
+## Customization
 
 Zoomy allows a few customizations in its behavior:
 
@@ -102,6 +102,21 @@ A ZoomListener is also provided if you are interested in zoom events.
                     .target(mZoomableView)
                     .interpolator(new OvershootInterpolator());
 ```
+
+## Immersive Mode
+
+It's important to note that when zooming on a view and entering immersive mode, the system bars are hidden and reveal the activity's theme. If you're using a default theme, this background may be white, and this can make the background while zooming inconsistent.
+
+To resolve this, consider setting the following fields for your activity's theme:
+
+```xml
+<style name="AppTheme.BlackWindowColor" parent="AppTheme">
+    <item name="android:windowBackground">@color/black</item>
+    <item name="android:background">@color/black</item>
+</style>
+```
+
+For more info, you can read through the comments on [this ticket](https://github.com/imablanco/Zoomy/issues/8).
 
 License
 =======
