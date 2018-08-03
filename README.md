@@ -60,7 +60,7 @@ This flags will always override default ZoomyConfig flags.
 ```
 
 + You can add callbacks to listen for specific events. Because Zoomy works by attaching a View.OnTouchListener to the registered View,
-View.OnClickListener can`t be set along with Zoomy, so a TapListener is provided to ensure the View still can listen for click events.
+View.OnClickListener can not be set along with Zoomy, so a TapListener, LongPressListener and DoubleTapListener are provided to ensure the View still can listen for gestures.
 A ZoomListener is also provided if you are interested in zoom events.
 ```java
  Zoomy.Builder builder = new Zoomy.Builder(this)
@@ -69,6 +69,17 @@ A ZoomListener is also provided if you are interested in zoom events.
                         @Override
                         public void onTap(View v) {
                             //View tapped, do stuff
+                        }
+                    })
+                     .longPressListener(new LongPressListener() {
+                        @Override
+                        public void onLongPress(View v) {
+                            //View long pressed, do stuff
+                        }
+                    }).doubleTapListener(new DoubleTapListener() {
+                        @Override
+                        public void onDoubleTap(View v) {
+                            //View double tapped, do stuff
                         }
                     })
                     .zoomListener(new ZoomListener() {
