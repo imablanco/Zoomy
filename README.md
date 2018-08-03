@@ -23,6 +23,14 @@ builder.register();
 
 Thats all. Now your views can be pinch-zoomed!
 
+Views can be unregistered for Zoomy too
+
+```java
+
+Zoomy.unregister(mZoomableView');
+            
+```
+
 ##Customization
 
 Zoomy allows a few customizations in its behavior:
