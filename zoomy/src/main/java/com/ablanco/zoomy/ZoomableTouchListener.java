@@ -26,38 +26,44 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private static final float MIN_SCALE_FACTOR = 1f;
     private static final float MAX_SCALE_FACTOR = 5f;
-
+    private final TapListener mTapListener;
+    private final LongPressListener mLongPressListener;
+    private final DoubleTapListener mDoubleTapListener;
     private int mState = STATE_IDLE;
-
     private TargetContainer mTargetContainer;
     private View mTarget;
     private ImageView mZoomableView;
     private View mShadow;
-
     private ScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mGestureDetector;
-    private SimpleGestureListener mGestureListener = new SimpleGestureListener(){
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            if(mTapListener != null) mTapListener.onTap(mTarget);
-            return true;
-        }
-    };
+    private GestureDetector.SimpleOnGestureListener mGestureListener =
+            new GestureDetector.SimpleOnGestureListener() {
 
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    if (mTapListener != null) mTapListener.onTap(mTarget);
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    if (mLongPressListener != null) mLongPressListener.onLongPress(mTarget);
+                }
+
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    if (mDoubleTapListener != null) mDoubleTapListener.onDoubleTap(mTarget);
+                    return true;
+                }
+            };
     private float mScaleFactor = 1f;
-
     private PointF mCurrentMovementMidPoint = new PointF();
     private PointF mInitialPinchMidPoint = new PointF();
     private Point mTargetViewCords = new Point();
-
     private boolean mAnimatingZoomEnding = false;
-
     private Interpolator mEndZoomingInterpolator;
-
     private ZoomyConfig mConfig;
     private ZoomListener mZoomListener;
-    private final TapListener mTapListener;
-
     private Runnable mEndingZoomAction = new Runnable() {
         @Override
         public void run() {
@@ -77,8 +83,14 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     };
 
 
-    ZoomableTouchListener(TargetContainer targetContainer, View view, ZoomyConfig config, Interpolator interpolator,
-                          ZoomListener zoomListener, TapListener tapListener) {
+    ZoomableTouchListener(TargetContainer targetContainer,
+                          View view,
+                          ZoomyConfig config,
+                          Interpolator interpolator,
+                          ZoomListener zoomListener,
+                          TapListener tapListener,
+                          LongPressListener longPressListener,
+                          DoubleTapListener doubleTapListener) {
         this.mTargetContainer = targetContainer;
         this.mTarget = view;
         this.mConfig = config;
@@ -88,6 +100,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         this.mGestureDetector = new GestureDetector(view.getContext(), mGestureListener);
         this.mZoomListener = zoomListener;
         this.mTapListener = tapListener;
+        this.mLongPressListener = longPressListener;
+        this.mDoubleTapListener = doubleTapListener;
     }
 
     @Override
@@ -240,16 +254,16 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private void hideSystemUI() {
         mTargetContainer.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN); // hide status ba;
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                | View.SYSTEM_UI_FLAG_FULLSCREEN); // hide status ba;
     }
 
     private void showSystemUI() {
         mTargetContainer.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
-    private void disableParentTouch(ViewParent view){
+    private void disableParentTouch(ViewParent view) {
         view.requestDisallowInterceptTouchEvent(true);
-        if(view.getParent() != null) disableParentTouch((view.getParent()));
+        if (view.getParent() != null) disableParentTouch((view.getParent()));
     }
 }

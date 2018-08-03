@@ -12,6 +12,8 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ablanco.zoomy.DoubleTapListener;
+import com.ablanco.zoomy.LongPressListener;
 import com.ablanco.zoomy.TapListener;
 import com.ablanco.zoomy.Zoomy;
 
@@ -70,7 +72,21 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Tap on "
                                     + v.getTag(), Toast.LENGTH_SHORT).show();
                         }
+                    })
+                    .longPressListener(new LongPressListener() {
+                        @Override
+                        public void onLongPress(View v) {
+                            Toast.makeText(MainActivity.this, "Long press on "
+                                    + v.getTag(), Toast.LENGTH_SHORT).show();
+                        }
+                    }).doubleTapListener(new DoubleTapListener() {
+                        @Override
+                        public void onDoubleTap(View v) {
+                            Toast.makeText(MainActivity.this, "Double tap on "
+                                    + v.getTag(), Toast.LENGTH_SHORT).show();
+                        }
                     });
+
             builder.register();
         }
 
