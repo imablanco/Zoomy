@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/imablanco/Zoomy'
     gitUrl = 'https://github.com/imablanco/Zoomy.git'
 
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.1.0'
 
     developerId = 'ablanco'
     developerName = 'Alvaro Blanco'
@@ -32,7 +32,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
