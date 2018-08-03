@@ -2,6 +2,7 @@ package com.ablanco.zoomysample;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,15 +49,16 @@ public class MainActivity extends AppCompatActivity {
             this.images = images;
         }
 
+        @NonNull
         @Override
-        public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             ImageView imageView = new SquareImageView(MainActivity.this);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return new ImageViewHolder(imageView);
         }
 
         @Override
-        public void onBindViewHolder(ImageViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final ImageViewHolder holder, int position) {
             ((ImageView) holder.itemView).setImageResource(images.get(position));
             holder.itemView.setTag(holder.getAdapterPosition());
             Zoomy.Builder builder = new Zoomy.Builder(MainActivity.this)
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class CommonItemSpaceDecoration extends RecyclerView.ItemDecoration {
-        private int mSpace = 0;
+        private int mSpace;
 
         CommonItemSpaceDecoration(int space) {
             this.mSpace = space;

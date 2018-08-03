@@ -1,6 +1,8 @@
 package com.ablanco.zoomy;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.view.View;
 import android.view.animation.Interpolator;
 
@@ -25,14 +27,22 @@ public class Zoomy {
         private boolean mDisposed = false;
 
         private ZoomyConfig mConfig;
-        private Activity mActivity;
+        private TargetContainer mTargetContainer;
         private View mTargetView;
         private ZoomListener mZoomListener;
         private Interpolator mZoomInterpolator;
         private TapListener mTapListener;
 
         public Builder(Activity activity) {
-            this.mActivity = activity;
+            this.mTargetContainer = new ActivityContainer(activity);
+        }
+
+        public Builder(Dialog dialog) {
+            this.mTargetContainer = new DialogContainer(dialog);
+        }
+
+        public Builder(DialogFragment dialogFragment) {
+            this.mTargetContainer = new DialogFragmentContainer(dialogFragment);
         }
 
         public Builder target(View target) {
@@ -54,7 +64,7 @@ public class Zoomy {
             return this;
         }
 
-        public Builder interpolator(Interpolator interpolator){
+        public Builder interpolator(Interpolator interpolator) {
             checkNotDisposed();
             this.mZoomInterpolator = interpolator;
             return this;
@@ -75,10 +85,11 @@ public class Zoomy {
         public void register() {
             checkNotDisposed();
             if (mConfig == null) mConfig = mDefaultConfig;
-            if (mActivity == null) throw new IllegalArgumentException("Activity must not be null");
+            if (mTargetContainer == null)
+                throw new IllegalArgumentException("Target container must not be null");
             if (mTargetView == null)
                 throw new IllegalArgumentException("Target view must not be null");
-            mTargetView.setOnTouchListener(new ZoomableTouchListener(mActivity, mTargetView,
+            mTargetView.setOnTouchListener(new ZoomableTouchListener(mTargetContainer, mTargetView,
                     mConfig, mZoomInterpolator, mZoomListener, mTapListener));
             mDisposed = true;
         }

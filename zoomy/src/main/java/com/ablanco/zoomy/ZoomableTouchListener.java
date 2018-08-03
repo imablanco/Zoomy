@@ -1,6 +1,5 @@
 package com.ablanco.zoomy;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -9,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -29,7 +29,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private int mState = STATE_IDLE;
 
-    private Activity mActivity;
+    private TargetContainer mTargetContainer;
     private View mTarget;
     private ImageView mZoomableView;
     private View mShadow;
@@ -77,15 +77,15 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     };
 
 
-    ZoomableTouchListener(Activity activity, View view, ZoomyConfig config, Interpolator interpolator,
+    ZoomableTouchListener(TargetContainer targetContainer, View view, ZoomyConfig config, Interpolator interpolator,
                           ZoomListener zoomListener, TapListener tapListener) {
-        this.mActivity = activity;
+        this.mTargetContainer = targetContainer;
         this.mTarget = view;
         this.mConfig = config;
         this.mEndZoomingInterpolator = interpolator != null
                 ? interpolator : new AccelerateDecelerateInterpolator();
-        this.mScaleGestureDetector = new ScaleGestureDetector(activity, this);
-        this.mGestureDetector = new GestureDetector(activity, mGestureListener);
+        this.mScaleGestureDetector = new ScaleGestureDetector(view.getContext(), this);
+        this.mGestureDetector = new GestureDetector(view.getContext(), mGestureListener);
         this.mZoomListener = zoomListener;
         this.mTapListener = tapListener;
     }
@@ -168,14 +168,12 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
                     .setInterpolator(mEndZoomingInterpolator)
                     .withEndAction(mEndingZoomAction).start();
         } else mEndingZoomAction.run();
-
     }
 
 
     private void startZoomingView(View view) {
-        mZoomableView = new ImageView(mActivity);
-        mZoomableView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        mZoomableView = new ImageView(mTarget.getContext());
+        mZoomableView.setLayoutParams(new ViewGroup.LayoutParams(mTarget.getWidth(), mTarget.getHeight()));
         mZoomableView.setImageBitmap(ViewUtils.getBitmapFromView(view));
 
         //show the view in the same coords
@@ -184,20 +182,18 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         mZoomableView.setX(mTargetViewCords.x);
         mZoomableView.setY(mTargetViewCords.y);
 
-        if (mShadow == null) mShadow = new View(mActivity);
+        if (mShadow == null) mShadow = new View(mTarget.getContext());
         mShadow.setBackgroundResource(0);
 
         addToDecorView(mShadow);
         addToDecorView(mZoomableView);
 
         //trick for simulating the view is getting out of his parent
-        mTarget.getParent().requestDisallowInterceptTouchEvent(true);
+        disableParentTouch(mTarget.getParent());
         mTarget.setVisibility(View.INVISIBLE);
 
         if (mConfig.isImmersiveModeEnabled()) hideSystemUI();
         if (mZoomListener != null) mZoomListener.onViewStartedZooming(mTarget);
-
-
     }
 
 
@@ -213,7 +209,6 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         mZoomableView.setScaleX(mScaleFactor);
         mZoomableView.setScaleY(mScaleFactor);
         obscureDecorView(mScaleFactor);
-
         return true;
     }
 
@@ -228,11 +223,11 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     }
 
     private void addToDecorView(View v) {
-        ((ViewGroup) mActivity.getWindow().getDecorView()).addView(v);
+        mTargetContainer.getDecorView().addView(v);
     }
 
     private void removeFromDecorView(View v) {
-        ((ViewGroup) mActivity.getWindow().getDecorView()).removeView(v);
+        mTargetContainer.getDecorView().removeView(v);
     }
 
     private void obscureDecorView(float factor) {
@@ -244,12 +239,17 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     }
 
     private void hideSystemUI() {
-        mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        mTargetContainer.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN); // hide status ba;
     }
 
     private void showSystemUI() {
-        mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        mTargetContainer.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+    }
+
+    private void disableParentTouch(ViewParent view){
+        view.requestDisallowInterceptTouchEvent(true);
+        if(view.getParent() != null) disableParentTouch((view.getParent()));
     }
 }
