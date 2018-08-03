@@ -22,6 +22,10 @@ public class Zoomy {
         mDefaultConfig = config;
     }
 
+    public static void unregister(View view) {
+        view.setOnTouchListener(null);
+    }
+
     public static class Builder {
 
         private boolean mDisposed = false;
