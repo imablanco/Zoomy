@@ -33,6 +33,7 @@ public class Zoomy {
         private ZoomyConfig mConfig;
         private TargetContainer mTargetContainer;
         private View mTargetView;
+        private View mTargetDuplicate;
         private ZoomListener mZoomListener;
         private Interpolator mZoomInterpolator;
         private TapListener mTapListener;
@@ -53,6 +54,11 @@ public class Zoomy {
 
         public Builder target(View target) {
             this.mTargetView = target;
+            return this;
+        }
+
+        public Builder setTargetDuplicate(View duplicate) {
+            this.mTargetDuplicate = duplicate;
             return this;
         }
 
@@ -108,7 +114,7 @@ public class Zoomy {
                 throw new IllegalArgumentException("Target container must not be null");
             if (mTargetView == null)
                 throw new IllegalArgumentException("Target view must not be null");
-            mTargetView.setOnTouchListener(new ZoomableTouchListener(mTargetContainer, mTargetView,
+            mTargetView.setOnTouchListener(new ZoomableTouchListener(mTargetContainer, mTargetView, mTargetDuplicate,
                     mConfig, mZoomInterpolator, mZoomListener, mTapListener, mLongPressListener,
                     mdDoubleTapListener));
             mDisposed = true;

@@ -32,7 +32,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private int mState = STATE_IDLE;
     private TargetContainer mTargetContainer;
     private View mTarget;
-    private ImageView mZoomableView;
+    private View mTargetDuplicate;
+    private View mZoomableView;
     private View mShadow;
     private ScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mGestureDetector;
@@ -85,6 +86,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     ZoomableTouchListener(TargetContainer targetContainer,
                           View view,
+                          View duplicate,
                           ZoomyConfig config,
                           Interpolator interpolator,
                           ZoomListener zoomListener,
@@ -93,6 +95,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
                           DoubleTapListener doubleTapListener) {
         this.mTargetContainer = targetContainer;
         this.mTarget = view;
+        this.mTargetDuplicate = duplicate;
         this.mConfig = config;
         this.mEndZoomingInterpolator = interpolator != null
                 ? interpolator : new AccelerateDecelerateInterpolator();
@@ -186,9 +189,14 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
 
     private void startZoomingView(View view) {
-        mZoomableView = new ImageView(mTarget.getContext());
-        mZoomableView.setLayoutParams(new ViewGroup.LayoutParams(mTarget.getWidth(), mTarget.getHeight()));
-        mZoomableView.setImageBitmap(ViewUtils.getBitmapFromView(view));
+        if (mTargetDuplicate == null) {
+            ImageView targetDup = new ImageView(mTarget.getContext());
+            targetDup.setLayoutParams(new ViewGroup.LayoutParams(mTarget.getWidth(), mTarget.getHeight()));
+            targetDup.setImageBitmap(ViewUtils.getBitmapFromView(view));
+            mZoomableView = targetDup;
+        } else {
+            mZoomableView = mTargetDuplicate;
+        }
 
         //show the view in the same coords
         mTargetViewCords = ViewUtils.getViewAbsoluteCords(view);
