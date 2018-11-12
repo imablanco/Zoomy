@@ -190,11 +190,14 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     private void startZoomingView(View view) {
         if (mTargetDuplicate == null) {
+            // If there is no custom view defined for zooming, simply make a snapshot of the current
+            // target and zoom that.
             ImageView targetDup = new ImageView(mTarget.getContext());
             targetDup.setLayoutParams(new ViewGroup.LayoutParams(mTarget.getWidth(), mTarget.getHeight()));
             targetDup.setImageBitmap(ViewUtils.getBitmapFromView(view));
             mZoomableView = targetDup;
         } else {
+            // Otherwise, zoom the custom duplicated target
             mZoomableView = mTargetDuplicate;
         }
 
