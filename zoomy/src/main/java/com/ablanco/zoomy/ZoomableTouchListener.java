@@ -186,9 +186,22 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
 
     private void startZoomingView(View view) {
+        // To be safe we end the zoomingView if has not been done before
+        if (mZoomableView != null) endZoomingView();
         mZoomableView = new ImageView(mTarget.getContext());
         mZoomableView.setLayoutParams(new ViewGroup.LayoutParams(mTarget.getWidth(), mTarget.getHeight()));
         mZoomableView.setImageBitmap(ViewUtils.getBitmapFromView(view));
+
+        // Add touch listener to decor view
+        // To be able to zoom after a screenshot was made with a gesture such as 3 fingers down.
+        // We need to forward the touch events right away to the target view to be able to zoom correctly.
+        mTargetContainer.getDecorView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mTarget.dispatchTouchEvent(event);
+                return v.performClick();
+            }
+        });
 
         //show the view in the same coords
         mTargetViewCords = ViewUtils.getViewAbsoluteCords(view);
