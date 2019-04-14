@@ -1,5 +1,8 @@
 package com.ablanco.zoomy;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -170,17 +173,38 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         return true;
     }
 
-
     private void endZoomingView() {
         if (mConfig.isZoomAnimationEnabled()) {
             mAnimatingZoomEnding = true;
-            mZoomableView.animate()
-                    .x(mTargetViewCords.x)
-                    .y(mTargetViewCords.y)
-                    .scaleX(1)
-                    .scaleY(1)
-                    .setInterpolator(mEndZoomingInterpolator)
-                    .withEndAction(mEndingZoomAction).start();
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                float xStart = mZoomableView.getX();
+                float yStart = mZoomableView.getY();
+                float scaleStart = mZoomableView.getScaleX();
+
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mZoomableView.setX(xStart + animation.getAnimatedFraction() * (mTargetViewCords.x - xStart));
+                    mZoomableView.setY(yStart + animation.getAnimatedFraction() * (mTargetViewCords.y - yStart));
+                    mScaleFactor = scaleStart + animation.getAnimatedFraction() * (1f - scaleStart);
+                    mZoomableView.setScaleX(mScaleFactor);
+                    mZoomableView.setScaleY(mScaleFactor);
+                    obscureDecorView(mScaleFactor >= 1 ? mScaleFactor: 1);
+                }
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    mEndingZoomAction.run();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mEndingZoomAction.run();
+                }
+            });
+            animator.setInterpolator(mEndZoomingInterpolator);
+            animator.start();
         } else mEndingZoomAction.run();
     }
 
