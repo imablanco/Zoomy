@@ -9,6 +9,7 @@ public class ZoomyConfig {
 
     private boolean zoomAnimationEnabled = true;
     private boolean immersiveModeEnabled = true;
+    private boolean shadowEnabled = true;
 
     public boolean isZoomAnimationEnabled() {
         return zoomAnimationEnabled;
@@ -24,5 +25,13 @@ public class ZoomyConfig {
 
     public void setImmersiveModeEnabled(boolean immersiveModeEnabled) {
         this.immersiveModeEnabled = immersiveModeEnabled;
+    }
+
+    public boolean isShadowEnabled() {
+        return shadowEnabled;
+    }
+
+    public void setShadowEnabled(boolean shadowEnabled) {
+        this.shadowEnabled = shadowEnabled;
     }
 }

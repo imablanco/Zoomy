@@ -67,7 +67,9 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private Runnable mEndingZoomAction = new Runnable() {
         @Override
         public void run() {
-            removeFromDecorView(mShadow);
+            if (mConfig.isShadowEnabled()) {
+                removeFromDecorView(mShadow);
+            }
             removeFromDecorView(mZoomableView);
             mTarget.setVisibility(View.VISIBLE);
             mZoomableView = null;
@@ -196,10 +198,12 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         mZoomableView.setX(mTargetViewCords.x);
         mZoomableView.setY(mTargetViewCords.y);
 
-        if (mShadow == null) mShadow = new View(mTarget.getContext());
-        mShadow.setBackgroundResource(0);
+        if (mConfig.isShadowEnabled()) {
+            if (mShadow == null) mShadow = new View(mTarget.getContext());
+            mShadow.setBackgroundResource(0);
+            addToDecorView(mShadow);
+        }
 
-        addToDecorView(mShadow);
         addToDecorView(mZoomableView);
 
         //trick for simulating the view is getting out of his parent
@@ -222,7 +226,9 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
         mZoomableView.setScaleX(mScaleFactor);
         mZoomableView.setScaleY(mScaleFactor);
-        obscureDecorView(mScaleFactor);
+        if (mConfig.isShadowEnabled()) {
+            obscureDecorView(mScaleFactor);
+        }
         return true;
     }
 
