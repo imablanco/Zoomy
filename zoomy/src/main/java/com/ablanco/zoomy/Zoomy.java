@@ -70,6 +70,13 @@ public class Zoomy {
             return this;
         }
 
+        public Builder enableShadow(boolean enable) {
+            checkNotDisposed();
+            if (mConfig == null) mConfig = new ZoomyConfig();
+            this.mConfig.setShadowEnabled(enable);
+            return this;
+        }
+
         public Builder interpolator(Interpolator interpolator) {
             checkNotDisposed();
             this.mZoomInterpolator = interpolator;
