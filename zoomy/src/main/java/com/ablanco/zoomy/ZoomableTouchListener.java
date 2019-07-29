@@ -106,8 +106,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     @Override
     public boolean onTouch(View v, MotionEvent ev) {
-
-        if (mAnimatingZoomEnding || ev.getPointerCount() > 2) return true;
+           // fixed issue for 3 fingers touch
+         if (mAnimatingZoomEnding || ev.getPointerCount() > 2) { mEndingZoomAction.run(); return true; }
 
         mScaleGestureDetector.onTouchEvent(ev);
         mGestureDetector.onTouchEvent(ev);
