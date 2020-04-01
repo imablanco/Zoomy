@@ -8,6 +8,7 @@ import android.view.View;
  */
 
 public interface ZoomListener {
+    void onViewBeforeStartedZooming(View view);
     void onViewStartedZooming(View view);
     void onViewEndedZooming(View view);
 }

@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/imablanco/Zoomy'
     gitUrl = 'https://github.com/imablanco/Zoomy.git'
 
-    libraryVersion = '1.1.0'
+    libraryVersion = '1.1.1'
 
     developerId = 'ablanco'
     developerName = 'Alvaro Blanco'
