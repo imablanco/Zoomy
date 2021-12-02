@@ -7,10 +7,10 @@ Zoomy is an easy to use pinch-to-zoom Android library
 ## Installation
 
 ```gradle
-implementation 'io.github.imablanc:zoomy:{latest version}'
+implementation 'io.github.imablanco:zoomy:{latest version}'
 ```
 
-##Usage 
+## Usage 
 
 To start using Zoomy, just register the View you want to be zoomable
 
@@ -31,7 +31,7 @@ Zoomy.unregister(mZoomableView');
             
 ```
 
-##Customization
+## Customization
 
 Zoomy allows a few customizations in its behavior:
 
