@@ -9,23 +9,21 @@ buildscript {
     ext.supportVersion = '27.1.1'
 
     repositories {
-        jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2'
     }
+}
+
+plugins {
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
 }
 
 allprojects {
     repositories {
         mavenCentral()
-        jcenter()
         google()
     }
 }
@@ -33,3 +31,11 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apply from: "${rootDir}/scripts/publish-root.gradle"
+
+ext {
+    PUBLISH_GROUP_ID = 'io.github.imablanco'
+    PUBLISH_VERSION = '1.0.0'
+}
+

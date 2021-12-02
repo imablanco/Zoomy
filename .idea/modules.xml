@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Zoomy.iml" filepath="$PROJECT_DIR$/Zoomy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/zoomy/zoomy.iml" filepath="$PROJECT_DIR$/zoomy/zoomy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Zoomy.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Zoomy.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/zoomy/Zoomy.zoomy.iml" filepath="$PROJECT_DIR$/.idea/modules/zoomy/Zoomy.zoomy.iml" />
     </modules>
   </component>
 </project>

@@ -1,28 +1,10 @@
 apply plugin: 'com.android.library'
 
 ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'zoomy'
-
-    publishedGroupId = 'com.ablanco.zoomy'
-    libraryName = 'Zoomy'
-    artifact = 'zoomy'
-
-    libraryDescription = 'Zoomy is an easy to use pinch-to-zoom Android library Edit'
-
-    siteUrl = 'https://github.com/imablanco/Zoomy'
-    gitUrl = 'https://github.com/imablanco/Zoomy.git'
-
-    libraryVersion = '1.1.0'
-
-    developerId = 'ablanco'
-    developerName = 'Alvaro Blanco'
-    developerEmail = 'alvaro.bl91@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+    PUBLISH_ARTIFACT_ID = 'zoomy'
 }
+
+apply from: "${rootDir}/scripts/publish-module.gradle"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -31,8 +13,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -49,6 +29,3 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
 }
-
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
